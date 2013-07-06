@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:enabled="true"
+		android:id="@+id/mainmenu_home"
+		android:title="@string/mainmenu_home" />
+	<item
+		android:id="@+id/mainmenu_refresh"
+		android:title="@string/mainmenu_refresh" />
+	<item
+		android:id="@+id/mainmenu_createdir"
+		android:title="@string/mainmenu_createdir" />
+	<item
+		android:id="@+id/mainmenu_exit"
+		android:title="@string/mainmenu_exit" />
+</menu>

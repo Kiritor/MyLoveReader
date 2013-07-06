@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="canvas">#FF404040</color>
+    <color name="bar">#f0f0f0</color>
+    <color name="textColor">#404040</color>
+    <color name="titleBg">#C0202020</color>
+    <color name="page_num">#c6c3c6</color>
+    
+</resources>

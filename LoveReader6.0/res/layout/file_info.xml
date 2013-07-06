@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:layout_margin="8dp">
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/file_name"
+			android:textColor="#ff6699ff" />
+		<TextView
+			android:id="@+id/file_name"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="" />
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/file_size"
+			android:textColor="#ff6699ff" />
+		<TextView
+			android:id="@+id/file_size"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="" />
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/file_lastmodified"
+			android:textColor="#ff6699ff" />
+		<TextView
+			android:id="@+id/file_lastmodified"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="" />
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/file_contents"
+			android:textColor="#ff6699ff" />
+		<TextView
+			android:id="@+id/file_contents"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="" />
+	</LinearLayout>
+</LinearLayout>

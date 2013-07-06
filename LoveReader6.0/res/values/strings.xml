@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, LoveReaderActivity!</string>
+    <string name="app_name">LoveReader</string>
+    <string name="lovetitle">一本好书  一生财富</string>
+    <string name="progress">当前进度：%s</string>
+	<string name="progress_o">当前进度：20%</string>
+	<string name="ok">确定</string>
+	
+	<string name="confirm_exit">确认退出程序？</string>
+	<string name="mainmenu_home">主目录</string>
+	<string name="mainmenu_refresh">刷新</string>
+	<string name="mainmenu_createdir">新建文件夹</string>
+	<string name="mainmenu_exit">返回书架</string>
+	<string name="file_rename">重命名</string>
+	<string name="file_delete">删除</string>
+	<string name="file_info">详情</string>
+	<string name="file_cannotopen">无法打开: %1$s</string>
+	
+	<string name="file_exists">文件已存在！</string>
+	<string name="file_namecannotempty">文件名不能为空</string>
+	<string name="file_create_fail">创建文件失败！</string>
+	<string name="file_rename_fail">重命名失败！</string>
+	
+	<string name="file_name">文件名</string>
+	<string name="file_size">大小</string>
+	<string name="file_contents">内容</string>
+	<string name="file_lastmodified">最后修改时间</string>
+	<string name="file_paste">粘贴</string>
+	<string name="file_copy">复制</string>
+	<string name="file_move">移动</string>
+	<string name="file_create">新建</string>
+	<string name="file_copy_fail">复制文件失败！</string>
+	<string name="file_move_fail">移动文件失败！</string>
+	<string name="file_notexists">文件不存在！</string>
+	
+	<string name="importbook">导入书架</string>
+	<string name="font_color">字体颜色</string>
+	 <string name="no_media_warning">Storage Media not present</string>
+    <string name="no_media_hint">Sharing the storage media with a PC can make it inaccessible</string>
+    <string name="open_failed">Unable to open document</string>
+    <string name="cancel">Cancel</string>
+    <string name="search_backwards">Search backwards</string>
+    <string name="search_forwards">Search forwards</string>
+    <string name="search_document">Search document</string>
+    <string name="picker_title">MuPDF</string>
+    <string name="outline_title">Table of Contents</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="text_not_found">Text not found</string>
+    <string name="searching_">Searching...</string>
+    <string name="link_control">Link highlighting and enabling</string>
+	</resources>
