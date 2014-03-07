@@ -36,7 +36,7 @@ import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+//
 @SuppressLint("WrongCall")
 public class BookActivity extends Activity {
 	/** Called when the activity is first created. */
