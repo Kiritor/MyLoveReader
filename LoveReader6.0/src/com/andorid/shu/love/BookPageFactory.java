@@ -2,9 +2,9 @@
 package com.andorid.shu.love;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.MappedByteBuffer;
@@ -14,13 +14,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector; 
 
+import org.mozilla.intl.chardet.nsDetector;
+import org.mozilla.intl.chardet.nsICharsetDetectionObserver;
+import org.mozilla.intl.chardet.nsPSMDetector;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.graphics.Typeface;
-import android.widget.Toast;
+import android.util.Log;
+
 /***
  *@author Kiritor
  *生成页面的工厂 */
@@ -39,7 +43,6 @@ public class BookPageFactory {
 	private Vector<String> m_lines = new Vector<String>();
 
 	private int m_fontSize = 40;
-	private int r_fontSize = 30;
 	private int m_textColor = Color.BLACK;
 	private int m_backColor = 0xffff9e85; // 背景颜色
 	private int marginWidth = 15; // 左右与边缘的距离
@@ -51,7 +54,6 @@ public class BookPageFactory {
 	private float mVisibleWidth; // 绘制内容的宽
 	private boolean m_isfirstPage, m_islastPage;
 	private int b_FontSize = 16;//底部文字大小
-	private int e_fontSize = 5;
 	private int spaceSize = 20;//行间距大小
 	private int curProgress = 0;//当前的进度
 	private String fileName = "";
@@ -64,7 +66,6 @@ public class BookPageFactory {
 	private Paint titlePaint;//标题绘制
 
 	public BookPageFactory(int w, int h) {
-		// TODO Auto-generated constructor stub
 		mWidth = w;
 		mHeight = h;
 		mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -95,19 +96,60 @@ public class BookPageFactory {
 		titlePaint.setColor(m_textColor);
 		
 	}
+	
+	private  String encoding(String fileName) throws java.io.IOException {
+
+		FileInputStream fis = new FileInputStream(fileName);
+	    m_strCharsetName = "GBK";
+	    
+		nsDetector det = new nsDetector(nsPSMDetector.ALL, true);	
+		det.Init(new nsICharsetDetectionObserver() {
+            public void Notify(String charset) {
+                Log.i("doc", "CHARSET = " + charset);
+                m_strCharsetName = charset;
+            }
+		});
+		
+		byte[] buf = new byte[1024] ;
+        int len;
+        boolean done = false ;
+        boolean isAscii = true ;
+
+        while( (len = fis.read(buf,0,buf.length)) != -1) {
+
+                // Check if the stream is only ascii.
+                if (isAscii)
+                    isAscii = det.isAscii(buf,len);
+
+                // DoIt if non-ascii and not done yet.
+                if (!isAscii && !done)
+                    done = det.DoIt(buf,len, false);
+        }
+        det.DataEnd();
+        det.Reset();
+        fis.close();
+
+        if (isAscii) {
+           System.out.println("CHARSET = ASCII");
+           return null;
+        }
+		
+	    return m_strCharsetName;
+	  }
 
 	public void openbook(String strFilePath) {
 		try {
+			// get the file encode
+			encoding(strFilePath);
+
 			book_file = new File(strFilePath);
 			long lLen = book_file.length();
 			m_mbBufLen = (int) lLen;
 			m_mbBuf = new RandomAccessFile(book_file, "r").getChannel().map(
 					FileChannel.MapMode.READ_ONLY, 0, lLen);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -208,7 +250,6 @@ public class BookPageFactory {
 			try {
 				strParagraph = new String(paraBuf, m_strCharsetName);
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			String strReturn = "";
@@ -237,7 +278,6 @@ public class BookPageFactory {
 					m_mbBufEnd -= (strParagraph + strReturn)
 							.getBytes(m_strCharsetName).length;
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -257,7 +297,6 @@ public class BookPageFactory {
 			try {
 				strParagraph = new String(paraBuf, m_strCharsetName);
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			strParagraph = strParagraph.replaceAll("\r\n", "");
@@ -279,7 +318,6 @@ public class BookPageFactory {
 				m_mbBufBegin += lines.get(0).getBytes(m_strCharsetName).length;
 				lines.remove(0);
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
