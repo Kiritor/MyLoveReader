@@ -1,16 +1,11 @@
 package com.andorid.shu.love;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask; 
-  
-
 import com.sqlite.DbHelper; 
 
 import android.annotation.SuppressLint;
 import android.app.Activity; 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface; 
 import android.content.Intent;
@@ -52,7 +47,7 @@ public class BookActivity extends Activity {
 	private int whichSize=6;//当前的字体大小
 	private int txtProgress = 0;//当前阅读的进度
 	
-	private String bookPath = Environment.getExternalStorageDirectory().getPath() + "/lovereader/";
+	private String mBookPath = Environment.getExternalStorageDirectory().getPath() + "/lovereader/";
 	final String[] font = new String[] {"10","12","14","16","18","20","24","26","30","32","36",
 			"40","46","50","56","60","66","70"};
 	int curPostion;
@@ -97,7 +92,7 @@ public class BookActivity extends Activity {
 				pagefactory.setFileName(book.bookname);
 				mPageWidget = new PageWidget(this, w, h);
 				setContentView(mPageWidget);
-				pagefactory.openbook(bookPath + book.bookname);
+				pagefactory.openbook(mBookPath + book.bookname);
 				if (book.bookmark > 0) { 
 					whichSize = setup.fontsize;
 					pagefactory.setFontSize(Integer.parseInt(font[setup.fontsize]));
@@ -123,10 +118,15 @@ public class BookActivity extends Activity {
 					@Override
 					public boolean onTouch(View v, MotionEvent e) {
 						boolean ret = false;
-						if (v == mPageWidget) {
+						if (v == mPageWidget) { 
 							if (e.getAction() == MotionEvent.ACTION_DOWN) {
 								mPageWidget.abortAnimation();
 								mPageWidget.calcCornerXY(e.getX(), e.getY());
+								
+								if(mPageWidget.isMiddle()) {
+									openOptionsMenu();
+									return true;
+								}
 
 								pagefactory.onDraw(mCurPageCanvas);
 								if (mPageWidget.DragToRight()) {
@@ -152,8 +152,13 @@ public class BookActivity extends Activity {
 									}
 									pagefactory.onDraw(mNextPageCanvas);
 								}
+								
 								mPageWidget.setBitmaps(mCurPageBitmap, mNextPageBitmap);
 							}
+							
+							if (mPageWidget.isMiddle())
+								return true;
+							
 							ret = mPageWidget.doTouchEvent(e);
 							return ret;
 						}
@@ -277,49 +282,13 @@ public class BookActivity extends Activity {
 		mPageWidget.invalidate();
 		//mPageWidget.postInvalidate();
 	}
-	private void creatIsExit() {
-		Dialog dialog = new AlertDialog.Builder(BookActivity.this).setTitle(
-				"提示").setMessage(
-				"是否确认退出？确定吗，真的吗").setPositiveButton(
-				"确定",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						dialog.cancel();
-						finish();
-					}
-				}).setNegativeButton("取消",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.cancel();
-					}
-				}).create();// 创建按钮
-		dialog.show();
-	}
-	Timer tExit = new Timer();
-    TimerTask task = new TimerTask() {
-        @Override
-        public void run() {
-        }
-    };
-	  @Override
+
+
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		  //pagefactory.createLog();
-		  //System.out.println("TabHost_Index.java onKeyDown");
 		  if (keyCode == KeyEvent.KEYCODE_BACK) {
 			  addBookMark();
 			  this.finish();
-//			  if(isExit == false ) {
-//				  isExit = true;
-//				  Toast.makeText(this, "再按一次后退键退出应用程序",
-//						  Toast.LENGTH_SHORT).show(); 
-//				  if(!hasTask) {
-//					  tExit.schedule(task, 2000);
-//				  }
-//			  } else {
-//				  finish();
-//				  System.exit(0);
-//			  }
 		  }
 		  return false;
 	}

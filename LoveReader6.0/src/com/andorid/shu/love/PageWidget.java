@@ -17,11 +17,13 @@ import android.widget.Scroller;
 
 public class PageWidget extends View {
 
+	@SuppressWarnings("unused")
 	private static final String TAG = "hmg";
 	private int mWidth = 480;
 	private int mHeight = 800;
 	private int mCornerX = 0; // 拖拽点对应的页脚
 	private int mCornerY = 0;
+	private boolean isMiddle = false;
 	private Path mPath0;
 	private Path mPath1;
 	Bitmap mCurPageBitmap = null; // 当前页
@@ -66,7 +68,7 @@ public class PageWidget extends View {
 
 	public PageWidget(Context context, int w, int h) {
 		super(context);
-		// TODO Auto-generated constructor stub
+
 		mWidth = w;
 		mHeight = h;
 		mPath0 = new Path();
@@ -92,14 +94,22 @@ public class PageWidget extends View {
 	 * Author : hmg25 Version: 1.0 Description : 计算拖拽点对应的拖拽脚
 	 */
 	public void calcCornerXY(float x, float y) {
-		if (x <= mWidth / 2)
+		if (x <= mWidth / 3)
 			mCornerX = 0;
-		else
+		else if(x >= mWidth*2 / 3)
 			mCornerX = mWidth;
+		else {
+			isMiddle = true;
+			return;
+		}
+		
+		isMiddle = false;
+		
 		if (y <= mHeight / 2)
 			mCornerY = 0;
 		else
 			mCornerY = mHeight;
+		
 		if ((mCornerX == 0 && mCornerY == mHeight)
 				|| (mCornerX == mWidth && mCornerY == 0))
 			mIsRTandLB = true;
@@ -108,7 +118,7 @@ public class PageWidget extends View {
 	}
 
 	public boolean doTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub
+
 		if (event.getAction() == MotionEvent.ACTION_MOVE) {
 			mTouch.x = event.getX();
 			mTouch.y = event.getY();
@@ -557,6 +567,15 @@ public class PageWidget extends View {
 		if (mCornerX > 0)
 			return false;
 		return true;
+	}
+	
+	/**
+	 * if touch in the middle of the view.
+	 * client will call openOptionsMenu()
+	 * @return
+	 */
+	public boolean isMiddle() {
+		return isMiddle;
 	}
 
 }
