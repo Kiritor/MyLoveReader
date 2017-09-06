@@ -43,15 +43,10 @@ public class LoveReaderActivity extends Activity {
 	private Button local_button;
 	/**用于判断是否推出*/
 	private static Boolean isExit = false;
-	private static Boolean hasTask = false;
 	private Context myContext;
 	private ShelfAdapter mAdapter;
-	private Button shelf_image_button;
 	private ListView shelf_list;
-	private Button buttontt;
 	int[] size = null;// 假设数据
-	private final int SPLASH_DISPLAY_LENGHT = 5000; // 延迟五秒
-	private final int MENU_RENAME = Menu.FIRST;
 	DbHelper db; // 数据库操作对象
 	List<BookInfo> books;
 	int realTotalRow;
@@ -98,7 +93,6 @@ public class LoveReaderActivity extends Activity {
 	}
 
 	private void init() {
-		shelf_image_button = (Button) findViewById(R.id.shelf_image_button);
 		shelf_list = (ListView) findViewById(R.id.shelf_list);
 	}
 

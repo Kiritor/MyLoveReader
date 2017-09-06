@@ -1,15 +1,11 @@
 package com.andorid.shu.love;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask; 
-  
 import com.sqlite.DbHelper; 
- 
+
 import android.annotation.SuppressLint;
 import android.app.Activity; 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface; 
 import android.content.Intent;
@@ -18,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas; 
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
@@ -32,7 +29,6 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,12 +44,10 @@ public class BookActivity extends Activity {
 	private Bitmap mCurPageBitmap, mNextPageBitmap;
 	private Canvas mCurPageCanvas, mNextPageCanvas;
 	private BookPageFactory pagefactory;
-	private static Boolean isExit = false;//用于判断是否推出
-	private static Boolean hasTask = false;
 	private int whichSize=6;//当前的字体大小
 	private int txtProgress = 0;//当前阅读的进度
 	
-	private String bookPath = "/sdcard/lovereader/";
+	private String mBookPath = Environment.getExternalStorageDirectory().getPath() + "/lovereader/";
 	final String[] font = new String[] {"10","12","14","16","18","20","24","26","30","32","36",
 			"40","46","50","56","60","66","70"};
 	int curPostion;
@@ -98,19 +92,14 @@ public class BookActivity extends Activity {
 				pagefactory.setFileName(book.bookname);
 				mPageWidget = new PageWidget(this, w, h);
 				setContentView(mPageWidget);
-				pagefactory.openbook(bookPath + book.bookname);
-				int m_mbBufLen = pagefactory.getBufLen();
-				
+				pagefactory.openbook(mBookPath + book.bookname);
 				if (book.bookmark > 0) { 
 					whichSize = setup.fontsize;
 					pagefactory.setFontSize(Integer.parseInt(font[setup.fontsize]));
-					//pos = String.valueOf(m_mbBufLen*0.1);
-					int begin = m_mbBufLen*100/100;
 					pagefactory.setBeginPos(Integer.valueOf(book.bookmark));
 					try {
 						pagefactory.prePage();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					//setContentView(mPageWidget);
@@ -129,10 +118,15 @@ public class BookActivity extends Activity {
 					@Override
 					public boolean onTouch(View v, MotionEvent e) {
 						boolean ret = false;
-						if (v == mPageWidget) {
+						if (v == mPageWidget) { 
 							if (e.getAction() == MotionEvent.ACTION_DOWN) {
 								mPageWidget.abortAnimation();
 								mPageWidget.calcCornerXY(e.getX(), e.getY());
+								
+								if(mPageWidget.isMiddle()) {
+									openOptionsMenu();
+									return true;
+								}
 
 								pagefactory.onDraw(mCurPageCanvas);
 								if (mPageWidget.DragToRight()) {
@@ -158,8 +152,13 @@ public class BookActivity extends Activity {
 									}
 									pagefactory.onDraw(mNextPageCanvas);
 								}
+								
 								mPageWidget.setBitmaps(mCurPageBitmap, mNextPageBitmap);
 							}
+							
+							if (mPageWidget.isMiddle())
+								return true;
+							
 							ret = mPageWidget.doTouchEvent(e);
 							return ret;
 						}
@@ -218,8 +217,7 @@ public class BookActivity extends Activity {
 			   seek.setProgress(txtProgress);
 			   textView.setText(String.format(getString(R.string.progress), txtProgress+"%"));
 			   seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-				   int progressBar = 0;
-					@Override
+				   @Override
 					public void onStopTrackingTouch(SeekBar seekBar) {
 						int progressBar = seekBar.getProgress();
 						int m_mbBufLen = pagefactory.getBufLen();
@@ -231,7 +229,6 @@ public class BookActivity extends Activity {
 						try {
 							pagefactory.prePage();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						//setContentView(mPageWidget);
@@ -276,7 +273,6 @@ public class BookActivity extends Activity {
 		try {
 			pagefactory.nextPage();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		setContentView(mPageWidget);
@@ -286,51 +282,13 @@ public class BookActivity extends Activity {
 		mPageWidget.invalidate();
 		//mPageWidget.postInvalidate();
 	}
-	private void creatIsExit() {
-		Dialog dialog = new AlertDialog.Builder(BookActivity.this).setTitle(
-				"提示").setMessage(
-				"是否确认退出？确定吗，真的吗").setPositiveButton(
-				"确定",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						dialog.cancel();
-						finish();
-					}
-				}).setNegativeButton("取消",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.cancel();
-					}
-				}).create();// 创建按钮
-		dialog.show();
-	}
-	Timer tExit = new Timer();
-    TimerTask task = new TimerTask() {
-        @Override
-        public void run() {
-            isExit = false;
-            hasTask = true;
-        }
-    };
-	  @Override
+
+
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		  //pagefactory.createLog();
-		  //System.out.println("TabHost_Index.java onKeyDown");
 		  if (keyCode == KeyEvent.KEYCODE_BACK) {
 			  addBookMark();
 			  this.finish();
-//			  if(isExit == false ) {
-//				  isExit = true;
-//				  Toast.makeText(this, "再按一次后退键退出应用程序",
-//						  Toast.LENGTH_SHORT).show(); 
-//				  if(!hasTask) {
-//					  tExit.schedule(task, 2000);
-//				  }
-//			  } else {
-//				  finish();
-//				  System.exit(0);
-//			  }
 		  }
 		  return false;
 	}
@@ -363,13 +321,12 @@ public class BookActivity extends Activity {
 				if (mCursor.getCount() > 0) {
 					mCursor.moveToPosition(mCursor.getCount() - 1);
 					String pos = mCursor.getString(2);
-					String tmp = mCursor.getString(1);
+					mCursor.getString(1);
 					 
 					pagefactory.setBeginPos(Integer.valueOf(pos));
 					try {
 						pagefactory.prePage();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					pagefactory.onDraw(mNextPageCanvas);
